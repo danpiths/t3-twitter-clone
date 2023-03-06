@@ -1,0 +1,6 @@
+v2.uploader.upload(imagePath, {
+  use_filename: true,
+  overwrite: true,
+  unique_filename: false,
+  folder: "twitter-clone",
+});
