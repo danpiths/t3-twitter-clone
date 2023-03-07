@@ -31,12 +31,13 @@ export default async function handler(
 ) {
   const session = await getServerAuthSession({ req, res });
   await runMiddleware(req, res, uploadMiddleware);
-  console.log("------------------", session?.user.id, "---------------");
   //eslint-disable-next-line @typescript-eslint/await-thenable
   const stream = await cloudinary.uploader.upload_stream(
     {
       use_filename: true,
-      filename_override: `${session?.user.id}.jpg`,
+      filename_override: `${
+        session?.user.id ? session.user.id : "garbage"
+      }.jpg`,
       overwrite: true,
       unique_filename: false,
       folder: "twitter-clone",
