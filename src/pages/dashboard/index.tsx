@@ -114,7 +114,7 @@ const Dashboard: NextPage = () => {
                 height={100}
                 className="h-16 w-16 rounded-full object-cover object-center"
               />
-              <div className="md:w-full">
+              <div className="flex-1 md:w-full">
                 <p className="text-lg font-bold">{user?.name}</p>
                 <p className="w-11/12 break-all text-xs">{user?.email}</p>
               </div>

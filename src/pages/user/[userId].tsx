@@ -158,7 +158,7 @@ const UserPage: NextPage = () => {
                 height={100}
                 className="h-16 w-16 rounded-full object-cover object-center"
               />
-              <div>
+              <div className="flex-1">
                 <p className="text-lg font-bold">{user?.name}</p>
                 <button
                   className={`primary-btn mt-1 ${

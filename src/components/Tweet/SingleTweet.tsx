@@ -107,7 +107,7 @@ const SingleTweet: FC<Props> = ({ tweet }) => {
             . {dayjs(tweet.createdAt).fromNow(true)}
           </span>
         </p>
-        <p className="break-all text-sm">{tweet.text}</p>
+        <p className="break-words text-sm">{tweet.text}</p>
         <div className="flex items-center gap-2">
           <button
             onClick={handleLikeClick}
