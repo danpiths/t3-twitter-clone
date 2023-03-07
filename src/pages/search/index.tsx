@@ -14,7 +14,7 @@ const SearchPage: NextPage = () => {
   const userName = router.query.userName as string;
 
   const users = api.user.searchUsers.useInfiniteQuery(
-    { userName, limit: 5 },
+    { userName, limit: 10 },
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
     }

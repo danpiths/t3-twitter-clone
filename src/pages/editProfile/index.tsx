@@ -151,7 +151,7 @@ const EditProfile: NextPage = () => {
                   : "Upload New Image"}
               </p>
             </button>
-            <div className="flex-1 md:flex-none">
+            <div className="">
               <p className="font-bold">Image:</p>
               {user?.image && (
                 <Image
@@ -172,7 +172,7 @@ const EditProfile: NextPage = () => {
             </div>
             <button
               type="submit"
-              className="primary-btn bg-blue-400 hover:bg-blue-500 focus:bg-blue-500 focus:ring-blue-500 active:bg-blue-700 active:ring-blue-700 md:mt-4"
+              className="primary-btn mt-4 bg-blue-400 hover:bg-blue-500 focus:bg-blue-500 focus:ring-blue-500 active:bg-blue-700 active:ring-blue-700"
             >
               Edit
             </button>

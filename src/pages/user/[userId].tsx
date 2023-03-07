@@ -21,7 +21,7 @@ const UserPage: NextPage = () => {
   const followUser = api.follow.followUser.useMutation();
   const unfollowUser = api.follow.unfollowUser.useMutation();
   const tweets = api.tweet.getSingleUserTweets.useInfiniteQuery(
-    { limit: 3, userId },
+    { limit: 5, userId },
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
     }

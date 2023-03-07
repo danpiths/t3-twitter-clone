@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const HomePage: FC = () => {
   const SampleImages = [];
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 4; i++) {
     SampleImages.push(
       <Image
         //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -21,7 +21,7 @@ const HomePage: FC = () => {
   return (
     <div className="flex w-full flex-1 flex-col md:flex-row md:items-center md:justify-center">
       <div className="">
-        <h1 className="mt-7 text-2xl font-bold md:text-5xl">
+        <h1 className="mt-7 text-3xl font-bold md:text-5xl">
           Welcome to <br /> <span className="text-blue-400">Twitter</span>{" "}
           Clone!
         </h1>
