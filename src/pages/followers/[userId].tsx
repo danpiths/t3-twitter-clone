@@ -94,7 +94,9 @@ const Followers: NextPage = () => {
                     {follow.follower.image && (
                       <Image
                         src={follow.follower.image}
-                        alt={`${follow.follower.name}'s Image`}
+                        alt={`${
+                          follow.follower.name ? follow.follower.name : "null"
+                        }'s Image`}
                         width={100}
                         height={100}
                         className="h-10 w-10 rounded-full object-cover object-center"
