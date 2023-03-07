@@ -12,8 +12,10 @@ cloudinary.config({
   api_secret: env.CLOUDINARY_API_SECRET,
   secure: true,
 });
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
   return new Promise((resolve, reject) => {
+    //eslint-disable-next-line
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
         return reject(result);
@@ -29,7 +31,9 @@ export default async function handler(
   await runMiddleware(req, res, uploadMiddleware);
   //eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
+  //eslint-disable-next-line
   console.log(req.file.buffer);
+  //eslint-disable-next-line @typescript-eslint/await-thenable
   const stream = await cloudinary.uploader.upload_stream(
     {
       use_filename: true,
@@ -46,6 +50,7 @@ export default async function handler(
   );
   //eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
+  //eslint-disable-next-line
   streamifier.createReadStream(req.file.buffer).pipe(stream);
 }
 export const config = {
