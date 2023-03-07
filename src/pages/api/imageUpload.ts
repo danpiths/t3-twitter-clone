@@ -29,21 +29,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  await runMiddleware(req, res, uploadMiddleware);
-  //eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //@ts-ignore
-  //eslint-disable-next-line
-  console.log(req.file.buffer);
   const session = await getServerAuthSession({ req, res });
+  await runMiddleware(req, res, uploadMiddleware);
+  console.log("------------------", session?.user.id, "---------------");
   //eslint-disable-next-line @typescript-eslint/await-thenable
   const stream = await cloudinary.uploader.upload_stream(
     {
+      use_filename: true,
+      filename_override: `${session?.user.id}.jpg`,
       overwrite: true,
       unique_filename: false,
       folder: "twitter-clone",
       resource_type: "image",
       transformation: { crop: "lfill", height: 300, width: 300 },
-      filename_override: session?.user.id,
+      public_id: session?.user.id,
     },
     (error, result) => {
       if (error) return console.error(error);
