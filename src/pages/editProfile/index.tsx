@@ -51,7 +51,7 @@ const EditProfile: NextPage = () => {
     if (image) {
       const formData = new FormData();
       formData.append(
-        "image",
+        "file",
         image,
         `${session?.user.id ? session.user.id : "garbage"}.jpg`
       );

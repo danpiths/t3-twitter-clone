@@ -1,53 +1,53 @@
-import nextConnect from "next-connect";
 import multer from "multer";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { v2 } from "cloudinary";
-import { getServerAuthSession } from "../../server/auth";
-import path from "path";
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: "./public/uploads",
-    filename: (req, file, cb) => cb(null, file.originalname),
-  }),
+import { v2 as cloudinary } from "cloudinary";
+import streamifier from "streamifier";
+import { env } from "../../env.mjs";
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const uploadMiddleware = upload.single("file");
+cloudinary.config({
+  cloud_name: env.CLOUDINARY_CLOUD_NAME,
+  api_key: env.CLOUDINARY_API_KEY,
+  api_secret: env.CLOUDINARY_API_SECRET,
+  secure: true,
 });
-
-const apiRoute = nextConnect({
-  onError(error, req: NextApiRequest, res: NextApiResponse) {
-    res.status(501).json({
-      //eslint-disable-next-line
-      error: `Sorry something Happened! ${error.message ? error.message : ""}`,
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
     });
-  },
-  onNoMatch(req, res) {
-    res
-      .status(405)
-      .json({ error: `Method '${req.method ? req.method : ""}' Not Allowed` });
-  },
-});
-
-apiRoute.use(upload.array("image"));
-
-apiRoute.post(async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getServerAuthSession({ req, res });
-  const imagePath = path.join(
-    __dirname,
-    "../../../../public/uploads/" +
-      `${session?.user.id ? session.user.id : "garbage"}.jpg`
-  );
-  const uploadedImage = await v2.uploader.upload(imagePath, {
-    use_filename: true,
-    overwrite: true,
-    unique_filename: false,
-    folder: "twitter-clone",
-    resource_type: "image",
-    transformation: { crop: "lfill", height: 300, width: 300 },
   });
-  return res.status(200).json(uploadedImage);
-});
-
-export default apiRoute;
-
+}
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  await runMiddleware(req, res, uploadMiddleware);
+  //eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  console.log(req.file.buffer);
+  const stream = await cloudinary.uploader.upload_stream(
+    {
+      use_filename: true,
+      overwrite: true,
+      unique_filename: false,
+      folder: "twitter-clone",
+      resource_type: "image",
+      transformation: { crop: "lfill", height: 300, width: 300 },
+    },
+    (error, result) => {
+      if (error) return console.error(error);
+      res.status(200).json(result);
+    }
+  );
+  //eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  streamifier.createReadStream(req.file.buffer).pipe(stream);
+}
 export const config = {
   api: {
     bodyParser: false,
