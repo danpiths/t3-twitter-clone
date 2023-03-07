@@ -101,7 +101,7 @@ const EditProfile: NextPage = () => {
             <title>Edit Profile</title>
           </Head>
           <form
-            className="my-8 flex flex-1 flex-col justify-center gap-3 md:mx-auto md:w-1/4"
+            className="my-8 flex flex-1 flex-col justify-center gap-3 md:mx-auto md:w-1/3"
             //eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit}
           >

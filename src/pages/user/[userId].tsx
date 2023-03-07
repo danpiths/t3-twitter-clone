@@ -12,6 +12,7 @@ import SingleTweet from "../../components/Tweet/SingleTweet";
 import SearchBar from "../../components/Navigation/SearchBar";
 import { pusher } from "../../lib/Pusher";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import Link from "next/link";
 
 const UserPage: NextPage = () => {
   const { data: session, status } = useSession();
@@ -187,16 +188,22 @@ const UserPage: NextPage = () => {
                 <p className="font-bold">Tweets</p>
                 <p className="text-center">{user?._count.tweets}</p>
               </div>
-              <div>
-                <p className="font-bold">Followers</p>
-                <p className="text-center">{user?._count.followers}</p>
-              </div>
-              <div>
-                <p className="font-bold">Following</p>
-                <p className="text-center">{user?._count.following}</p>
-              </div>
+              {session?.user.id ? (
+                <>
+                  <Link href={`/followers/${userId}`}>
+                    <p className="font-bold">Followers</p>
+                    <p className="text-center">{user?._count.followers}</p>
+                  </Link>
+                  <Link href={`/following/${userId}`}>
+                    <p className="font-bold">Following</p>
+                    <p className="text-center">{user?._count.following}</p>
+                  </Link>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
-            <div className="mt-7">
+            <div className="mt-7 flex flex-1">
               {tweets.isLoading ? (
                 <div className="flex flex-1 items-center justify-center">
                   <SyncLoader color="#f1f5f9" size={7} />

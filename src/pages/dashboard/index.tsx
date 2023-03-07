@@ -104,7 +104,7 @@ const Dashboard: NextPage = () => {
           ) : (
             <></>
           )}
-          <div className="mt-5 flex flex-1 flex-col md:mx-auto md:w-1/4 md:justify-center">
+          <div className="mt-5 flex flex-1 flex-col md:mx-auto md:w-1/3 md:justify-center">
             <div className="flex items-center gap-3">
               <Image
                 //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -124,14 +124,20 @@ const Dashboard: NextPage = () => {
                 <p className="font-bold">Tweets</p>
                 <p className="text-center">{user?._count.tweets}</p>
               </div>
-              <div>
-                <p className="font-bold">Followers</p>
-                <p className="text-center">{user?._count.followers}</p>
-              </div>
-              <div>
-                <p className="font-bold">Following</p>
-                <p className="text-center">{user?._count.following}</p>
-              </div>
+              {session?.user.id ? (
+                <>
+                  <Link href={`/followers/${session.user.id}`}>
+                    <p className="font-bold">Followers</p>
+                    <p className="text-center">{user?._count.followers}</p>
+                  </Link>
+                  <Link href={`/following/${session.user.id}`}>
+                    <p className="font-bold">Following</p>
+                    <p className="text-center">{user?._count.following}</p>
+                  </Link>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
             <div className="my-5 flex flex-col gap-3">
               <Link
@@ -199,7 +205,7 @@ const DeleteUserModal: FC<{
 
   return (
     <div className="absolute top-0 left-0 z-[100] flex h-screen w-full flex-col items-center justify-center bg-black/40">
-      <div className="mx-7 flex flex-col rounded-md bg-slate-100 p-5 text-slate-800 md:w-1/4">
+      <div className="mx-7 flex flex-col rounded-md bg-slate-100 p-5 text-slate-800 md:w-1/3">
         {deleteUser.isLoading ? (
           <>
             <Head>
