@@ -3,9 +3,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
 import { env } from "../../env.mjs";
+import { getServerAuthSession } from "../../server/auth";
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-const uploadMiddleware = upload.single("file");
+const uploadMiddleware = upload.single("image");
 cloudinary.config({
   cloud_name: env.CLOUDINARY_CLOUD_NAME,
   api_key: env.CLOUDINARY_API_KEY,
@@ -33,15 +34,16 @@ export default async function handler(
   //@ts-ignore
   //eslint-disable-next-line
   console.log(req.file.buffer);
+  const session = await getServerAuthSession({ req, res });
   //eslint-disable-next-line @typescript-eslint/await-thenable
   const stream = await cloudinary.uploader.upload_stream(
     {
-      use_filename: true,
       overwrite: true,
       unique_filename: false,
       folder: "twitter-clone",
       resource_type: "image",
       transformation: { crop: "lfill", height: 300, width: 300 },
+      filename_override: session?.user.id,
     },
     (error, result) => {
       if (error) return console.error(error);
