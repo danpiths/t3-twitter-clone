@@ -84,7 +84,7 @@ const SingleTweet: FC<Props> = ({ tweet }) => {
       {tweet.user.image && (
         <Link
           href={`/user/${tweet.userId}`}
-          className=" h-min rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-[3px] focus:ring-offset-slate-800"
+          className=" h-min min-w-fit rounded-full focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-[3px] focus:ring-offset-slate-800"
         >
           <Image
             src={tweet.user.image}
