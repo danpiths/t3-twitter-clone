@@ -18,6 +18,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Head>
         <title>Twitter Clone</title>
         <meta
+          name="google-site-verification"
+          content="9YZFz6ZHOOlhgf6U-MHGFxCFEF-LfaQowRgqnMJRZog"
+        />
+        <meta
           name="description"
           content="A clone of Twitter created using T3 Stack"
         />
