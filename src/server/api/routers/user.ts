@@ -1,5 +1,6 @@
 import { v2 } from "cloudinary";
 import { z } from "zod";
+import { pusher } from "../root";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
@@ -33,17 +34,24 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({ name: z.string().min(3).trim(), image: z.string().nullish() })
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       try {
         if (input.image && input.image?.length > 1) {
-          return ctx.prisma.user.update({
+          const updatedUser = await ctx.prisma.user.update({
             where: { id: ctx.session.user.id },
             data: { name: input.name, image: input.image },
           });
+          await pusher.trigger("twitter-clone", "userChange", {
+            userId: updatedUser.id,
+          });
+          return updatedUser;
         }
-        return ctx.prisma.user.update({
+        const updatedUser = await ctx.prisma.user.update({
           where: { id: ctx.session.user.id },
           data: { name: input.name },
+        });
+        await pusher.trigger("twitter-clone", "userChange", {
+          userId: updatedUser.id,
         });
       } catch (error) {}
     }),
@@ -99,7 +107,9 @@ export const userRouter = createTRPCRouter({
         let nextCursor: typeof cursor | undefined = undefined;
         if (items.length > limit) {
           const nextItem = items.pop();
-          nextCursor = nextItem!.id;
+          if (nextItem !== undefined && nextItem !== null) {
+            nextCursor = nextItem.id;
+          }
         }
         return {
           items,

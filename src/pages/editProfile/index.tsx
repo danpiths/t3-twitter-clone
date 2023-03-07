@@ -1,5 +1,6 @@
-import { NextPage } from "next";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import type { NextPage } from "next";
+import { useEffect, useRef, useState } from "react";
+import type { ChangeEvent } from "react";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import TextInput from "../../components/Form/TextInput";
 import uploadImage from "../../../public/uploadImage.svg";
@@ -8,7 +9,7 @@ import { api } from "../../utils/api";
 import { useRouter } from "next/router";
 import { SyncLoader } from "react-spinners";
 import { useSession } from "next-auth/react";
-import { UploadApiResponse } from "cloudinary";
+import type { UploadApiResponse } from "cloudinary";
 import Link from "next/link";
 import Head from "next/head";
 
@@ -25,6 +26,7 @@ const EditProfile: NextPage = () => {
 
   useEffect(() => {
     !isLoading && user?.name && setName(user.name);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -37,6 +39,7 @@ const EditProfile: NextPage = () => {
     if (error && name.length >= 3) {
       setError("");
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name]);
 
   const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
@@ -47,16 +50,22 @@ const EditProfile: NextPage = () => {
     }
     if (image) {
       const formData = new FormData();
-      formData.append("image", image, `${session?.user.id}.jpg`);
+      formData.append(
+        "image",
+        image,
+        `${session?.user.id ? session.user.id : "garbage"}.jpg`
+      );
       const res = await fetch("/api/imageUpload", {
         body: formData,
         method: "POST",
       });
+      //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const uploadedImage: UploadApiResponse = await res.json();
       editUser.mutate(
         { image: uploadedImage.secure_url, name },
         {
           onSuccess: () => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             router.push("/dashboard");
           },
         }
@@ -66,6 +75,7 @@ const EditProfile: NextPage = () => {
         { name },
         {
           onSuccess: () => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             router.push("/dashboard");
           },
         }
@@ -92,6 +102,7 @@ const EditProfile: NextPage = () => {
           </Head>
           <form
             className="my-8 flex flex-1 flex-col justify-center gap-3 md:mx-auto md:w-1/4"
+            //eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit}
           >
             <TextInput
@@ -117,6 +128,7 @@ const EditProfile: NextPage = () => {
               onClick={() => {
                 if (image !== undefined && image !== null) {
                   setImage(null);
+                  //eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   //@ts-ignore
                   fileRef.current.value = null;
                 } else {
@@ -127,6 +139,7 @@ const EditProfile: NextPage = () => {
               {image === undefined ||
                 (image === null && (
                   <Image
+                    //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     src={uploadImage}
                     alt="Upload Image"
                     className="h-5 w-5"

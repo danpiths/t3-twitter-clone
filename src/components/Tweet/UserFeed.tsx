@@ -1,4 +1,5 @@
-import { FC, useEffect } from "react";
+import { useEffect } from "react";
+import type { FC } from "react";
 import { BeatLoader, SyncLoader } from "react-spinners";
 import { api } from "../../utils/api";
 import SingleTweet from "./SingleTweet";
@@ -19,34 +20,57 @@ const UserFeed: FC = () => {
   const { data: session } = useSession();
 
   useEffect(() => {
-    const tweetsChannel = pusher.subscribe("twitter-clone");
-    tweetsChannel.bind("tweetChange", (data: { userId: string }) => {
-      if (
-        session?.user.id &&
-        user &&
-        user.following.filter(
-          (follow) =>
-            follow.followerId === session.user.id &&
-            follow.followingId === data.userId
-        ).length > 0
-      ) {
-        TRPCContext.tweet.getTweets.invalidate();
-      }
-    });
-    tweetsChannel.bind("tweetLikeChange", (data: { tweetId: string }) => {
-      if (
-        tweets.data?.pages
-          .map((page) => {
-            const temp = page?.items.filter(
-              (tweet) => tweet.id === data.tweetId
-            );
-            return temp?.length && temp.length > 0;
-          })
-          .includes(true)
-      ) {
-        TRPCContext.tweet.getTweets.invalidate();
-      }
-    });
+    if (user && tweets.data?.pages.length) {
+      const tweetsChannel = pusher.subscribe("twitter-clone");
+      tweetsChannel.bind("tweetChange", async (data: { userId: string }) => {
+        if (
+          session?.user.id &&
+          user &&
+          user.following.filter(
+            (follow) =>
+              follow.followerId === session.user.id &&
+              follow.followingId === data.userId
+          ).length > 0
+        ) {
+          await TRPCContext.tweet.getTweets.invalidate();
+        }
+      });
+      tweetsChannel.bind(
+        "tweetLikeChange",
+        async (data: { tweetId: string }) => {
+          if (
+            tweets.data?.pages
+              .map((page) => {
+                const temp = page?.items.filter(
+                  (tweet) => tweet.id === data.tweetId
+                );
+                return temp?.length && temp.length > 0;
+              })
+              .includes(true)
+          ) {
+            await TRPCContext.tweet.getTweets.invalidate();
+          }
+        }
+      );
+      tweetsChannel.bind("userChange", async (data: { userId: string }) => {
+        if (
+          tweets.data?.pages
+            .map((page) => {
+              const temp = page?.items.filter(
+                (tweet) => tweet.userId === data.userId
+              );
+              return temp?.length && temp.length > 0;
+            })
+            .includes(true)
+        ) {
+          await TRPCContext.tweet.getTweets.invalidate();
+        }
+      });
+      return () => {
+        pusher.unsubscribe("twitter-clone");
+      };
+    }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, tweets]);
 
   useEffect(() => {
@@ -65,8 +89,10 @@ const UserFeed: FC = () => {
       }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     document.addEventListener("scroll", onScroll);
     return () => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       document.removeEventListener("scroll", onScroll);
     };
   }, [tweets]);

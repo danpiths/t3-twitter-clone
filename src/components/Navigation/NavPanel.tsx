@@ -2,7 +2,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
 
 const NavPanel: FC<{
   setIsPanelOpen: Dispatch<SetStateAction<boolean>>;
@@ -25,7 +25,7 @@ const NavPanel: FC<{
             key={i}
             href={link}
             className={`transition-no-outline py-3 text-center capitalize duration-150 ease-out focus:bg-slate-900/50 focus:outline-none ${
-              router.pathname === link && "bg-slate-900"
+              router.pathname === link ? "bg-slate-900" : ""
             }`}
             onClick={() => setIsPanelOpen(false)}
           >
@@ -35,6 +35,7 @@ const NavPanel: FC<{
         {session?.user ? (
           <button
             className="primary-btn mx-4 mt-auto mb-4 bg-rose-400 hover:bg-rose-500 focus:bg-rose-500 focus:ring-rose-500 active:bg-rose-700 active:ring-rose-700"
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={() => signOut({ callbackUrl: "/" })}
           >
             Logout

@@ -1,13 +1,13 @@
 import { HeartIcon as OutlineHeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as SolidHeartIcon } from "@heroicons/react/24/solid";
-import { Like, Tweet } from "@prisma/client";
+import type { Like, Tweet } from "@prisma/client";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { FC } from "react";
+import type { FC } from "react";
 import { api } from "../../utils/api";
 
 type Props = {
@@ -61,6 +61,7 @@ const SingleTweet: FC<Props> = ({ tweet }) => {
           { tweetId: tweet.id, userId: session?.user.id },
           {
             onSuccess: () => {
+              //eslint-disable-next-line @typescript-eslint/no-floating-promises
               TRPCContext.tweet.getTweets.invalidate();
             },
           }
@@ -70,6 +71,7 @@ const SingleTweet: FC<Props> = ({ tweet }) => {
         { tweetId: tweet.id },
         {
           onSuccess: () => {
+            //eslint-disable-next-line @typescript-eslint/no-floating-promises
             TRPCContext.tweet.getTweets.invalidate();
           },
         }

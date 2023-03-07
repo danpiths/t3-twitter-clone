@@ -1,11 +1,12 @@
-import { NextPage } from "next";
+import type { NextPage } from "next";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import defaultUserProfile from "../../../public/defaultUserProfile.svg";
 import { api } from "../../utils/api";
 import { useRouter } from "next/router";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
 import Link from "next/link";
 import { SyncLoader, BeatLoader } from "react-spinners";
 import Head from "next/head";
@@ -21,15 +22,19 @@ const Dashboard: NextPage = () => {
     const followChannel = pusher.subscribe("twitter-clone");
     followChannel.bind(
       "followChange",
-      (data: { followerId: string; followingId: string }) => {
+      async (data: { followerId: string; followingId: string }) => {
         if (
           data.followerId === session?.user.id ||
           data.followingId === session?.user.id
         ) {
-          TRPCContext.user.getSelf.invalidate();
+          await TRPCContext.user.getSelf.invalidate();
         }
       }
     );
+    return () => {
+      pusher.unsubscribe("twitter-clone");
+    };
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -53,8 +58,9 @@ const Dashboard: NextPage = () => {
           <div className="mt-5 flex flex-1 flex-col md:mx-auto md:w-1/4 md:justify-center">
             <div className="flex items-center gap-3">
               <Image
+                //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 src={user?.image ? user.image : defaultUserProfile}
-                alt={`${user?.name}'s Image`}
+                alt={`${user?.name ? user.name : "null"}'s Image`}
                 width={100}
                 height={100}
                 className="h-16 w-16 rounded-full object-cover object-center"
@@ -87,6 +93,7 @@ const Dashboard: NextPage = () => {
               </Link>
               <button
                 className="primary-btn bg-rose-400 hover:bg-rose-500 focus:bg-rose-500 focus:ring-rose-500 active:bg-rose-700 active:ring-rose-700"
+                //eslint-disable-next-line @typescript-eslint/no-misused-promises
                 onClick={() => signOut({ callbackUrl: "/" })}
               >
                 Logout
@@ -132,16 +139,18 @@ const DeleteUserModal: FC<{
               Are you sure you want to delete your account?
             </p>
             <p className="mt-1 text-xs">
-              You won't be able to recover any data after you've deleted your
-              account.
+              You won&apos;t be able to recover any data after you&apos;ve
+              deleted your account.
             </p>
             <div className="flex items-center gap-2">
               <button
                 className="primary-btn mt-4 flex-1 bg-rose-400 text-slate-100 ring-offset-slate-100 hover:bg-rose-500 focus:bg-rose-500 focus:ring-rose-500 active:bg-rose-700 active:ring-rose-700"
                 onClick={() => {
                   deleteUser.mutate(undefined, {
+                    //eslint-disable-next-line @typescript-eslint/no-misused-promises
                     onSuccess: async () => {
                       await signOut({ callbackUrl: "/" });
+                      // eslint-disable-next-line @typescript-eslint/no-floating-promises
                       router.push("/");
                     },
                   });

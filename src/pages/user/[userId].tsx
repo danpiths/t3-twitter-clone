@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import type { NextPage } from "next";
 import Image from "next/image";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import defaultUserProfile from "../../../public/defaultUserProfile.svg";
@@ -31,44 +31,57 @@ const UserPage: NextPage = () => {
 
   useEffect(() => {
     if (session?.user && status === "authenticated") {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       session.user.id === userId && router.push("/dashboard");
     }
-  }, [session]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, router]);
 
   useEffect(() => {
-    const followChannel = pusher.subscribe("twitter-clone");
-    followChannel.bind(
-      "followChange",
-      (data: { followerId: string; followingId: string }) => {
-        if (
-          data.followerId === session?.user.id ||
-          data.followingId === session?.user.id
-        ) {
-          TRPCContext.user.getSingleUser.invalidate();
+    if (userId && tweets.data?.pages.length) {
+      const channel = pusher.subscribe("twitter-clone");
+      channel.bind(
+        "followChange",
+        async (data: { followerId: string; followingId: string }) => {
+          if (
+            data.followerId === session?.user.id ||
+            data.followingId === session?.user.id
+          ) {
+            await TRPCContext.user.getSingleUser.invalidate();
+          }
         }
-      }
-    );
-    const tweetsChannel = pusher.subscribe("twitter-clone");
-    tweetsChannel.bind("tweetChange", (data: { userId: string }) => {
-      if (data.userId === userId) {
-        TRPCContext.tweet.getSingleUserTweets.invalidate();
-      }
-    });
-    tweetsChannel.bind("tweetLikeChange", (data: { tweetId: string }) => {
-      if (
-        tweets.data?.pages
-          .map((page) => {
-            const temp = page?.items.filter(
-              (tweet) => tweet.id === data.tweetId
-            );
-            return temp?.length && temp.length > 0;
-          })
-          .includes(true)
-      ) {
-        TRPCContext.tweet.getSingleUserTweets.invalidate();
-      }
-    });
-  }, [userId, tweets]);
+      );
+      channel.bind("tweetChange", async (data: { userId: string }) => {
+        if (data.userId === userId) {
+          await TRPCContext.tweet.getSingleUserTweets.invalidate();
+        }
+      });
+      channel.bind("tweetLikeChange", async (data: { tweetId: string }) => {
+        if (
+          tweets.data?.pages
+            .map((page) => {
+              const temp = page?.items.filter(
+                (tweet) => tweet.id === data.tweetId
+              );
+              return temp?.length && temp.length > 0;
+            })
+            .includes(true)
+        ) {
+          await TRPCContext.tweet.getSingleUserTweets.invalidate();
+        }
+      });
+      channel.bind("userChange", async (data: { userId: string }) => {
+        if (data.userId === userId) {
+          await TRPCContext.tweet.getSingleUserTweets.invalidate();
+          await TRPCContext.user.getSingleUser.invalidate();
+        }
+      });
+    }
+    return () => {
+      pusher.unsubscribe("twitter-clone");
+    };
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, tweets]);
 
   useEffect(() => {
     const onScroll = async (e: Event) => {
@@ -86,8 +99,10 @@ const UserPage: NextPage = () => {
       }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     document.addEventListener("scroll", onScroll);
     return () => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       document.removeEventListener("scroll", onScroll);
     };
   }, [tweets]);
@@ -97,7 +112,9 @@ const UserPage: NextPage = () => {
       { followingId: userId },
       {
         onSuccess: () => {
+          //eslint-disable-next-line @typescript-eslint/no-floating-promises
           TRPCContext.user.getSingleUser.invalidate({ userId });
+          //eslint-disable-next-line @typescript-eslint/no-floating-promises
           TRPCContext.tweet.getTweets.invalidate();
         },
       }
@@ -109,7 +126,9 @@ const UserPage: NextPage = () => {
       { followingId: userId },
       {
         onSuccess: () => {
+          //eslint-disable-next-line @typescript-eslint/no-floating-promises
           TRPCContext.user.getSingleUser.invalidate({ userId });
+          //eslint-disable-next-line @typescript-eslint/no-floating-promises
           TRPCContext.tweet.getTweets.invalidate();
         },
       }
@@ -125,14 +144,15 @@ const UserPage: NextPage = () => {
       ) : (
         <>
           <Head>
-            <title>{user?.name?.split(" ")[0]}'s Profile</title>
+            <title>{user?.name?.split(" ")[0]}&apos;s Profile</title>
           </Head>
           <div className="mt-4 flex flex-1 flex-col md:mx-auto md:w-1/3">
             <SearchBar />
             <div className="mt-4 flex items-center gap-3">
               <Image
+                //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 src={user?.image ? user.image : defaultUserProfile}
-                alt={`${user?.name}'s Image`}
+                alt={`${user?.name ? user.name : "null"}'s Image`}
                 width={100}
                 height={100}
                 className="h-16 w-16 rounded-full object-cover object-center"

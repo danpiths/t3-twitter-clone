@@ -1,16 +1,12 @@
-import { GetServerSideProps } from "next";
-import { BuiltInProviderType } from "next-auth/providers";
-import {
-  ClientSafeProvider,
-  getProviders,
-  LiteralUnion,
-  signIn,
-  useSession,
-} from "next-auth/react";
+import type { GetServerSideProps } from "next";
+import type { BuiltInProviderType } from "next-auth/providers";
+import { getProviders, signIn, useSession } from "next-auth/react";
+import type { ClientSafeProvider, LiteralUnion } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FC, useEffect } from "react";
+import { useEffect } from "react";
+import type { FC } from "react";
 import { SyncLoader } from "react-spinners";
 import googleLogo from "../../../public/googleLogo.svg";
 
@@ -27,8 +23,10 @@ const SignIn: FC<Props> = (props) => {
 
   useEffect(() => {
     if (session?.user && status === "authenticated") {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       router.push("/");
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   return status === "loading" || session?.user ? (
@@ -45,6 +43,7 @@ const SignIn: FC<Props> = (props) => {
           Object.values(props.providers).map((provider) => (
             <div key={provider.name}>
               <button
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 onClick={() =>
                   signIn(provider.id, {
                     callbackUrl: "/",
@@ -52,7 +51,11 @@ const SignIn: FC<Props> = (props) => {
                 }
                 className="primary-btn flex items-center gap-3 bg-slate-100 capitalize text-slate-800 hover:bg-slate-300 focus:bg-slate-300 focus:ring-slate-300 active:bg-slate-400 active:ring-slate-400"
               >
-                <Image src={googleLogo} alt="Google Logo" />
+                <Image
+                  //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  src={googleLogo}
+                  alt="Google Logo"
+                />
                 <p>Sign in with {provider.name}</p>
               </button>
             </div>

@@ -1,5 +1,5 @@
 import { signIn } from "next-auth/react";
-import { FC } from "react";
+import type { FC } from "react";
 import tweetSample from "../../../public/tweetSample.svg";
 import Image from "next/image";
 
@@ -8,6 +8,7 @@ const HomePage: FC = () => {
   for (let i = 0; i < 3; i++) {
     SampleImages.push(
       <Image
+        //eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         src={tweetSample}
         alt="Sample Tweet Graphic"
         className="mt-5 w-full md:ml-auto md:w-6/12"
@@ -27,6 +28,7 @@ const HomePage: FC = () => {
         <p className="mt-2 text-sm md:text-lg">Tweet stuff and follow people</p>
         <button
           className="primary-btn mt-4 w-full bg-blue-400 hover:bg-blue-500 focus:bg-blue-500 focus:ring-blue-500 active:bg-blue-700 active:ring-blue-700 md:self-start"
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick={() => signIn()}
         >
           Login

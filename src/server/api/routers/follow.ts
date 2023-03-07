@@ -17,7 +17,7 @@ export const followRouter = createTRPCRouter({
             followingId: true,
           },
         });
-        pusher.trigger("twitter-clone", "followChange", {
+        await pusher.trigger("twitter-clone", "followChange", {
           followerId: follow.followerId,
           followingId: follow.followingId,
         });
@@ -40,7 +40,7 @@ export const followRouter = createTRPCRouter({
             followingId: true,
           },
         });
-        pusher.trigger("twitter-clone", "followChange", {
+        await pusher.trigger("twitter-clone", "followChange", {
           followerId: unfollow.followerId,
           followingId: unfollow.followingId,
         });

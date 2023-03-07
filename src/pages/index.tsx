@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
-import Head from "next/head";
+import { SyncLoader } from "react-spinners";
 import HomePage from "../components/Home/HomePage";
 import TweetFeed from "../components/Home/TweetFeed";
 
@@ -9,15 +9,14 @@ const Home: NextPage = () => {
 
   return (
     <>
-      {status !== "loading" && !session ? (
-        <HomePage />
+      {status === "loading" ? (
+        <div className="flex flex-1 items-center justify-center">
+          <SyncLoader color="#f1f5f9" size={7} />
+        </div>
+      ) : session?.user ? (
+        <TweetFeed />
       ) : (
-        <>
-          <Head>
-            <title>Your Feed</title>
-          </Head>
-          <TweetFeed />
-        </>
+        <HomePage />
       )}
     </>
   );

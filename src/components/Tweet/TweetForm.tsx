@@ -1,5 +1,6 @@
 import Head from "next/head";
-import { FC, FormEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { FC, FormEvent } from "react";
 import { BeatLoader } from "react-spinners";
 import { api } from "../../utils/api";
 
@@ -22,6 +23,7 @@ const TweetForm: FC = () => {
       { text },
       {
         onSuccess: () => {
+          //eslint-disable-next-line @typescript-eslint/no-floating-promises
           TRPCContext.tweet.getTweets.invalidate();
           setText("");
         },
@@ -33,6 +35,7 @@ const TweetForm: FC = () => {
     if (error && text.length >= 5) {
       setError("");
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text]);
 
   return (

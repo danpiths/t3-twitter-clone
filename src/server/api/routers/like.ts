@@ -16,7 +16,7 @@ export const likeRouter = createTRPCRouter({
             tweetId: true,
           },
         });
-        pusher.trigger("twitter-clone", "tweetLikeChange", {
+        await pusher.trigger("twitter-clone", "tweetLikeChange", {
           tweetId: likeTweet.tweetId,
         });
         return likeTweet;
@@ -34,7 +34,7 @@ export const likeRouter = createTRPCRouter({
             tweetId: true,
           },
         });
-        pusher.trigger("twitter-clone", "tweetLikeChange", {
+        await pusher.trigger("twitter-clone", "tweetLikeChange", {
           tweetId: dislikeTweet.tweetId,
         });
         return dislikeTweet;

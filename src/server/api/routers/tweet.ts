@@ -1,4 +1,4 @@
-import { Follows, Tweet } from "@prisma/client";
+import type { Follows } from "@prisma/client";
 import { z } from "zod";
 import { pusher } from "../root";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -45,7 +45,9 @@ export const tweetRouter = createTRPCRouter({
           let nextCursor: typeof cursor | undefined = undefined;
           if (items.length > limit) {
             const nextItem = items.pop();
-            nextCursor = nextItem!.id;
+            if (nextItem !== undefined && nextItem !== null) {
+              nextCursor = nextItem.id;
+            }
           }
           return {
             items,
@@ -80,7 +82,9 @@ export const tweetRouter = createTRPCRouter({
         let nextCursor: typeof cursor | undefined = undefined;
         if (items.length > limit) {
           const nextItem = items.pop();
-          nextCursor = nextItem!.id;
+          if (nextItem !== undefined && nextItem !== null) {
+            nextCursor = nextItem.id;
+          }
         }
         return {
           items,
@@ -98,7 +102,7 @@ export const tweetRouter = createTRPCRouter({
             user: { connect: { id: ctx.session.user.id } },
           },
         });
-        pusher.trigger("twitter-clone", "tweetChange", {
+        await pusher.trigger("twitter-clone", "tweetChange", {
           userId: newTweet.userId,
         });
         return newTweet;

@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { BeatLoader, SyncLoader } from "react-spinners";
 import { api } from "../../utils/api";
@@ -35,9 +35,10 @@ const SearchPage: NextPage = () => {
         }
       }
     };
-
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     document.addEventListener("scroll", onScroll);
     return () => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       document.removeEventListener("scroll", onScroll);
     };
   }, [users]);
@@ -57,7 +58,7 @@ const SearchPage: NextPage = () => {
             <SearchBar />
             <h1 className="my-4 text-center text-xl">
               Search Results for <br />{" "}
-              <span className="font-bold">'{userName}'</span>
+              <span className="font-bold">&apos;{userName}&apos;</span>
             </h1>
             <div className="mt-2 flex flex-col gap-2">
               {users.data?.pages.map((page) =>
@@ -70,7 +71,7 @@ const SearchPage: NextPage = () => {
                     {user.image && (
                       <Image
                         src={user.image}
-                        alt={`${user.name}'s Image`}
+                        alt={`${user.name ? user.name : "null"}'s Image`}
                         width={100}
                         height={100}
                         className="h-10 w-10 rounded-full object-cover object-center"

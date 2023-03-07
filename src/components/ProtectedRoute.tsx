@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren } from "react";
 import { SyncLoader } from "react-spinners";
 import { api } from "../utils/api";
 
@@ -10,6 +10,7 @@ const ProtectedRoute: FC<PropsWithChildren> = ({ children }) => {
   const { isLoading } = api.user.getSelf.useQuery();
 
   if (!session && status !== "loading") {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     router.push("/");
   }
 

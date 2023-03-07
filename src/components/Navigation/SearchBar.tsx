@@ -1,4 +1,5 @@
-import { FC, FormEvent, useState } from "react";
+import { useState } from "react";
+import type { FC, FormEvent } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 
@@ -9,6 +10,7 @@ const SearchBar: FC = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSearch("");
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     router.push(`/search?userName=${search}`);
   };
 
