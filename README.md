@@ -49,6 +49,33 @@ Other Libraries used are,
 
 ![12](https://github.com/danpiths/t3-twitter-clone/assets/85949566/43f34231-5e65-4aab-bbe4-6746fac99655)
 
+## Run Locally
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/danpiths/t3-twitter-clone.git
+```
+
+2. Open a terminal in the cloned folder
+3. Install required packages
+
+```bash
+npm install
+```
+
+4. copy the `.env.example` to `.env` and populate the environment variables from respective sources (all instructions should be clear in `.env.example` file)
+5.  Synchronise the schema and database
+
+```bash
+npx prisma db push
+```
+
+6. Run the app
+
+```bash
+npm run dev
+```
 
 ## Learn More
 
