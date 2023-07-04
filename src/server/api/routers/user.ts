@@ -87,10 +87,7 @@ export const userRouter = createTRPCRouter({
         const items = await ctx.prisma.user.findMany({
           where: {
             AND: {
-              name: {
-                contains: input.userName,
-                mode: "insensitive",
-              },
+              name: { contains: input.userName },
               id: { not: ctx.session.user.id },
             },
           },

@@ -6,12 +6,13 @@ generator client {
 }
 
 datasource db {
-    provider = "postgresql"
+    provider     = "mysql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 // Necessary for Next auth
@@ -31,6 +32,7 @@ model Account {
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
@@ -39,6 +41,8 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
 }
 
 model User {
@@ -53,6 +57,8 @@ model User {
     likes         Like[]
     followers     Follows[] @relation("following")
     following     Follows[] @relation("follower")
+
+    @@index([name])
 }
 
 model VerificationToken {
@@ -70,6 +76,8 @@ model Tweet {
     userId    String
     createdAt DateTime @default(now())
     likes     Like[]
+
+    @@index([userId])
 }
 
 model Like {
@@ -79,6 +87,8 @@ model Like {
     tweetId String
 
     @@id([tweetId, userId])
+    @@index([tweetId])
+    @@index([userId])
 }
 
 model Follows {
@@ -89,4 +99,6 @@ model Follows {
     followedAt  DateTime @unique() @default(now())
 
     @@id([followerId, followingId])
+    @@index([followerId])
+    @@index([followingId])
 }
