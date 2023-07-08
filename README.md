@@ -20,7 +20,7 @@ T3 stack essentially has,
 
 Other Libraries/Tech used are,
 
-- [Railway](https://railway.app) to host the [Postgresql](https://www.postgresql.org) database
+- [PlanetScale](https://planetscale.com) to host the [MySQL](https://www.mysql.com) database
 - [Cloudinary](https://cloudinary.com) for image upload (user profile images)
 - [Pusher](https://pusher.com) to make the app realtime and stream information
 - [AutoAnimate](https://auto-animate.formkit.com) for some motion/life to the app
