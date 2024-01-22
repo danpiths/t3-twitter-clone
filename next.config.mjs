@@ -10,7 +10,18 @@
 const config = {
   reactStrictMode: true,
   images: {
-    domains: ["lh3.googleusercontent.com", "res.cloudinary.com"],
+    remotePatterns: [
+      {
+        hostname: "lh3.googleusercontent.com",
+        protocol: "https",
+        pathname: "/a/*",
+      },
+      {
+        hostname: "res.cloudinary.com",
+        protocol: "https",
+        pathname: "/leantuts/image/upload/*/twitter-clone/*",
+      },
+    ],
   },
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
